@@ -21,5 +21,4 @@ public class Product {
 
     @OneToOne(mappedBy = "product")
     private OrderItem orderItem;
-
 }
