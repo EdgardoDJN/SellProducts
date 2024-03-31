@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class Payment {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private double totalPayment;
+    private Double totalPayment;
     private LocalDate datePayment;
     @Enumerated(EnumType.STRING)
     private methodPayment method;

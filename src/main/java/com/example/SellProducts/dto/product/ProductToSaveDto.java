@@ -1,10 +1,12 @@
 package com.example.SellProducts.dto.product;
 
+import lombok.Builder;
+
+@Builder
 public record ProductToSaveDto(
-        Long id,
         String name,
-        double price,
-        int stock
+        Double price,
+        Integer stock
 ) {
     
 }

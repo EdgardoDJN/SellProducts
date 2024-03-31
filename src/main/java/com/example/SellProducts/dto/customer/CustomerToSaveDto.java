@@ -1,7 +1,9 @@
 package com.example.SellProducts.dto.customer;
 
+import lombok.Builder;
+
+@Builder
 public record CustomerToSaveDto(
-        Long id,
         String name,
         String email,
         String address
