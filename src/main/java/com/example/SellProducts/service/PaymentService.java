@@ -12,7 +12,7 @@ public interface PaymentService {
     List<PaymentDTO> getAllPayments();
     List<PaymentDTO> getPaymentsByOrderId(Long orderId, methodPayment method);
     List<PaymentDTO> getPaymentsForDateRange(LocalDate start, LocalDate end);
-    CreatePaymentDTO createPayment(CreatePaymentDTO createPaymentDTO);
+    PaymentDTO createPayment(CreatePaymentDTO createPaymentDTO);
     PaymentDTO UpdatePayment(Long id, UpdatePaymentDTO updatePaymentDTO);
     void deletePayment(Long id);
 }

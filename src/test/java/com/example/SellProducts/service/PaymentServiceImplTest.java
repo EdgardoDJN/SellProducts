@@ -1,7 +1,10 @@
 package com.example.SellProducts.service;
 
 import com.example.SellProducts.dto.payment.*;
-import com.example.SellProducts.entities.*;
+import com.example.SellProducts.entities.Order;
+import com.example.SellProducts.entities.OrderStatus;
+import com.example.SellProducts.entities.Payment;
+import com.example.SellProducts.entities.methodPayment;
 import com.example.SellProducts.exception.PaymentNotFoundException;
 import com.example.SellProducts.repositories.OrderRepository;
 import com.example.SellProducts.repositories.PaymentRepository;
@@ -11,18 +14,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentServiceImplTest {
@@ -32,7 +35,8 @@ class PaymentServiceImplTest {
     private PaymentMapper paymentMapper;
     @Mock
     private OrderRepository orderRepository;
-
+    @Mock
+    private PaymentProvider paymentProvider;
     @InjectMocks
     private PaymentServiceImpl paymentService;
 
@@ -154,11 +158,19 @@ class PaymentServiceImplTest {
         // Given
         var createPaymentDTO = CreatePaymentDTO.builder()
                 .orderId(payment.getOrder().getId())
-                .totalPayment(payment.getTotalPayment())
                 .datePayment(payment.getDatePayment())
                 .method(payment.getMethod())
                 .build();
-        given(paymentMapper.toEntity(createPaymentDTO)).willReturn(payment);
+
+        when(orderRepository.findById(anyLong())).thenReturn(Optional.of(payment.getOrder()));
+        when(paymentMapper.toEntity(any(CreatePaymentDTO.class))).thenReturn(payment);
+        when(paymentMapper.toDTO(any(Payment.class))).thenReturn(PaymentDTO.builder()
+                .id(payment.getId())
+                .totalPayment(payment.getTotalPayment())
+                .orderId(payment.getOrder().getId())
+                .datePayment(payment.getDatePayment())
+                .method(payment.getMethod())
+                .build());
 
         // Then
         var found = paymentService.createPayment(createPaymentDTO);
@@ -176,13 +188,12 @@ class PaymentServiceImplTest {
         // Given
         var updatePaymentDTO = UpdatePaymentDTO.builder()
                 .orderId(payment.getOrder().getId())
-                .totalPayment(200.0)
                 .datePayment(LocalDate.now())
                 .method(methodPayment.CASH)
                 .build();
         var paymentDTO = PaymentDTO.builder()
                 .id(payment.getId())
-                .totalPayment(updatePaymentDTO.totalPayment())
+                .totalPayment(payment.getTotalPayment())
                 .orderId(updatePaymentDTO.orderId())
                 .datePayment(updatePaymentDTO.datePayment())
                 .method(updatePaymentDTO.method())
@@ -190,8 +201,8 @@ class PaymentServiceImplTest {
 
         given(paymentRepository.findById(payment.getId())).willReturn(Optional.of(payment));
         given(orderRepository.findById(updatePaymentDTO.orderId())).willReturn(Optional.of(payment.getOrder()));
+        given(paymentProvider.calculateTotalItems(updatePaymentDTO.orderId())).willReturn(payment.getTotalPayment());
         given(paymentMapper.toDTO(payment)).willReturn(paymentDTO);
-        payment.setTotalPayment(updatePaymentDTO.totalPayment());
         given(paymentRepository.save(payment)).willReturn(payment);
 
         // Then
@@ -200,7 +211,6 @@ class PaymentServiceImplTest {
         // When
         assertThat(found).isNotNull();
         assertEquals(found.id(), payment.getId());
-        assertEquals(found.totalPayment(), updatePaymentDTO.totalPayment());
         assertEquals(found.orderId(), updatePaymentDTO.orderId());
         assertEquals(found.datePayment(), updatePaymentDTO.datePayment());
         assertEquals(found.method(), updatePaymentDTO.method());
