@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 //Seguir mismo orden que se lleva en la clase ProductServiceImpl
 @ExtendWith(MockitoExtension.class)
@@ -123,6 +127,16 @@ public class ProductServiceImplTest {
     }
 
     @Test
+    void givenEmail_whenGetCustomersByEmail_thenReturnEmptyList() {
+        // Given
+        given(productRepository.findByNameContainingIgnoreCase("Product 1")).willReturn(List.of());
+        // When
+        var customers = productService.getProductsByName("Product 1");
+        // Then
+        assertThat(customers).isEmpty();
+    }
+
+    @Test
     void givenQuantity_whenGetProductsByStockGreaterThan_thenReturnListOfProductDto() {
         // Given
         int quantity = 5;
@@ -144,6 +158,16 @@ public class ProductServiceImplTest {
         assertThat(products.get(0).name()).isEqualTo(product.getName());
         assertThat(products.get(0).price()).isEqualTo(product.getPrice());
         assertThat(products.get(0).stock()).isEqualTo(product.getStock());
+    }
+
+    @Test
+    void givenQuantity_whenGetProductsByStockGreaterThan_thenReturnEmptyList() {
+        // Given
+        given(productRepository.findByStockGreaterThan(5)).willReturn(List.of());
+        // When
+        var products = productService.getProductsByStockGreaterThan(5);
+        // Then
+        assertThat(products).isEmpty();
     }
 
     @Test
@@ -169,6 +193,16 @@ public class ProductServiceImplTest {
         assertThat(products.get(0).name()).isEqualTo(product.getName());
         assertThat(products.get(0).price()).isEqualTo(product.getPrice());
         assertThat(products.get(0).stock()).isEqualTo(product.getStock());
+    }
+
+    @Test
+    void givenMaxPriceAndMaxStock_whenGetProductsByPriceLessThanAndStockLessThan_thenReturnEmptyList() {
+        // Given
+        given(productRepository.findByPriceLessThanAndStockLessThan(15.0, 15)).willReturn(List.of());
+        // When
+        var products = productService.getProductsByPriceLessThanAndStockLessThan(15.0, 15);
+        // Then
+        assertThat(products).isEmpty();
     }
 
     @Test
@@ -245,6 +279,15 @@ public class ProductServiceImplTest {
     void givenProductId_whenDeleteProduct_thenProductShouldBeDeleted() {
         // Given
         Long id = 1L;
+        given(productRepository.findById(id)).willReturn(Optional.of(product));
+
+        willDoNothing().given(productRepository).delete(product);
+        productService.deleteProduct(id);
+
+        verify(productRepository, times(1)).delete(product);
+        /*
+        // Given
+        Long id = 1L;
         given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
 
         // When
@@ -252,6 +295,7 @@ public class ProductServiceImplTest {
 
         // Then
         assertThat(productRepository.existsById(id)).isFalse();
+         */
     }
 
     @Test
