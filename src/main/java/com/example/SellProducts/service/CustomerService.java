@@ -13,6 +13,6 @@ public interface CustomerService {
 
     CustomerDto findById(Long id);
     List<CustomerDto> findAll();
-    void deleteById(Long id);
+    void deleteCustomer(Long id);
     CustomerDto update(Long id, CustomerToSaveDto customerDto);
 }
