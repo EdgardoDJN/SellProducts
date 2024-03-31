@@ -8,7 +8,9 @@ import com.example.SellProducts.dto.detailShipping.DetailShippingDto;
 import com.example.SellProducts.dto.orderItem.OrderItemDto;
 import com.example.SellProducts.dto.payment.PaymentDTO;
 import com.example.SellProducts.entities.OrderStatus;
+import lombok.Builder;
 
+@Builder
 public record OrderDto(
         Long id,
         LocalDateTime dateOrder,
