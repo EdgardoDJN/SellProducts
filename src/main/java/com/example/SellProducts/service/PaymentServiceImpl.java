@@ -1,14 +1,13 @@
 package com.example.SellProducts.service;
 
-import com.example.SellProducts.dto.payment.CreatePaymentDTO;
-import com.example.SellProducts.dto.payment.PaymentDTO;
-import com.example.SellProducts.dto.payment.PaymentMapper;
-import com.example.SellProducts.dto.payment.UpdatePaymentDTO;
+import com.example.SellProducts.dto.payment.*;
 import com.example.SellProducts.entities.Payment;
 import com.example.SellProducts.entities.methodPayment;
+import com.example.SellProducts.exception.OrderNotFoundException;
 import com.example.SellProducts.exception.PaymentNotFoundException;
 import com.example.SellProducts.repositories.OrderRepository;
 import com.example.SellProducts.repositories.PaymentRepository;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,16 +17,19 @@ import java.util.Optional;
 @Service
 public class PaymentServiceImpl implements PaymentService{
     private final PaymentMapper paymentMapper;
+    private final PaymentProvider paymentProvider;
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
 
     public PaymentServiceImpl(
             PaymentMapper paymentMapper,
             PaymentRepository paymentRepository,
-            OrderRepository orderRepository) {
+            OrderRepository orderRepository,
+            PaymentProvider paymentProvider) {
         this.paymentMapper = paymentMapper;
         this.paymentRepository = paymentRepository;
         this.orderRepository = orderRepository;
+        this.paymentProvider = paymentProvider;
     }
 
     @Override
@@ -64,20 +66,29 @@ public class PaymentServiceImpl implements PaymentService{
     }
 
     @Override
-    public CreatePaymentDTO createPayment(CreatePaymentDTO createPaymentDTO) {
-        var payment = paymentMapper.toEntity(createPaymentDTO);
-        paymentRepository.save(payment);
+    public PaymentDTO createPayment(CreatePaymentDTO createPaymentDTO) {
+        var order = orderRepository.findById(createPaymentDTO.orderId())
+                .orElseThrow(OrderNotFoundException::new);
 
-        return createPaymentDTO;
+        var newPayment = CreatePaymentDTO.builder()
+                .orderId(createPaymentDTO.orderId())
+                .datePayment(createPaymentDTO.datePayment())
+                .method(createPaymentDTO.method())
+                .order(order)
+                .build();
+
+        var payment = paymentMapper.toEntity(newPayment);
+        paymentRepository.save(payment);
+        return paymentMapper.toDTO(payment);
     }
 
     @Override
     public PaymentDTO UpdatePayment(Long id, UpdatePaymentDTO updatePaymentDTO) {
         return paymentRepository.findById(id).map(payment -> {
-            payment.setTotalPayment(updatePaymentDTO.totalPayment());
             payment.setDatePayment(updatePaymentDTO.datePayment());
             payment.setMethod(updatePaymentDTO.method());
             payment.setOrder(orderRepository.findById(updatePaymentDTO.orderId()).orElseThrow(PaymentNotFoundException::new));
+            payment.setTotalPayment(paymentProvider.calculateTotalItems(updatePaymentDTO.orderId()));
             paymentRepository.save(payment);
             return paymentMapper.toDTO(payment);
         }).orElseThrow(PaymentNotFoundException::new);
