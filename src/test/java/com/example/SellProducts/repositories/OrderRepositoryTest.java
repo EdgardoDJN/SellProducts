@@ -1,6 +1,7 @@
 package com.example.SellProducts.repositories;
 
 import com.example.SellProducts.AbstractIntegrationDBTest;
+import com.example.SellProducts.dto.order.OrderDtoRetrieve;
 import com.example.SellProducts.entities.Customer;
 import com.example.SellProducts.entities.Order;
 import com.example.SellProducts.entities.OrderItem;
@@ -128,7 +129,7 @@ public class OrderRepositoryTest extends AbstractIntegrationDBTest {
 
 
         // When
-        List<Object[]> orders = orderRepository.retrieveOrdersWithItemsByCustomer(id);
+        List<OrderDtoRetrieve> orders = orderRepository.retrieveOrdersWithItemsByCustomer(id);
 
         // Then
         assertEquals(1, orders.size());
@@ -140,7 +141,7 @@ public class OrderRepositoryTest extends AbstractIntegrationDBTest {
         init();
 
         // When
-        List<Object[]> orders = orderRepository.retrieveOrdersWithItemsByCustomer(2L);
+        List<OrderDtoRetrieve> orders = orderRepository.retrieveOrdersWithItemsByCustomer(2L);
 
         // Then
         assertEquals(0, orders.size());
