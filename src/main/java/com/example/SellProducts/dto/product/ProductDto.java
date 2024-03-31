@@ -1,18 +1,15 @@
 package com.example.SellProducts.dto.product;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.example.SellProducts.dto.orderItem.OrderItemDto;
+import lombok.Builder;
 
+@Builder
 public record ProductDto( 
     Long id,
     String name,
-    double price,
-    int stock,
-    List<OrderItemDto> orderItems
+    Double price,
+    Integer stock,
+    OrderItemDto orderItem
 ) {
-    public List<OrderItemDto> orderItemDtos(){
-        return Collections.unmodifiableList(orderItems);
-    }
+
 }
