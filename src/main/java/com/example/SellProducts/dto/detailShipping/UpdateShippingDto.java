@@ -4,7 +4,9 @@ import com.example.SellProducts.entities.Order;
 import com.example.SellProducts.entities.Product;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
+@Builder
 public record UpdateShippingDto(
         @NotNull(message = "Is required")
         Long orderId,
