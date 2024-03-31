@@ -10,10 +10,10 @@ import lombok.Builder;
 
 @Builder
 public record DetailShippingDto(
-    Long id,
-    String address,
-    String transporter,
-    String trackingNumber,
-    Long productId,
-    Long orderId){
-}
+       Long id,
+       Long orderId,
+       Long productId,
+       String address,
+       String transporter,
+       String trackingNumber
+) { }
