@@ -2,6 +2,7 @@ package com.example.SellProducts.api;
 
 import com.example.SellProducts.dto.orderItem.*;
 import com.example.SellProducts.service.OrderItemService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,14 +39,14 @@ public class OrderItemController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderItemDto> createOrderItem(@RequestBody CreateOrderItemDto createOrderItemDto) {
+    public ResponseEntity<OrderItemDto> createOrderItem(@Valid @RequestBody CreateOrderItemDto createOrderItemDto) {
         return ResponseEntity.ok().body(orderItemService.createOrderItem(createOrderItemDto));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<OrderItemDto> updateOrderItem(
             @PathVariable("id") Long id,
-            @RequestBody UpdateOrderItemDto updateOrderItemDto) {
+            @Valid  @RequestBody UpdateOrderItemDto updateOrderItemDto) {
         return ResponseEntity.ok().body(orderItemService.updateOrderItem(id, updateOrderItemDto));
     }
 
