@@ -37,6 +37,8 @@ public class OrderItemServiceImpl implements OrderItemService {
         CreateOrderItemDto orderItemDto = CreateOrderItemDto.builder()
                 .product(product)
                 .order(order)
+                .orderId(createOrderItemDto.orderId())
+                .productId(createOrderItemDto.productId())
                 .quantity(createOrderItemDto.quantity())
                 .price(createOrderItemDto.price())
                 .build();
