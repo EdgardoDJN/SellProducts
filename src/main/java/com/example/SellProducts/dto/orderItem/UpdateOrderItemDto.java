@@ -1,7 +1,9 @@
 package com.example.SellProducts.dto.orderItem;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
+@Builder
 public record UpdateOrderItemDto(
         @NotNull(message = "Is required")
         Long productId,
