@@ -1,5 +1,10 @@
 package com.example.SellProducts.dto.orderItem;
 
-public record OrderItemDto() {
-    
-}
+import jakarta.validation.constraints.NotNull;
+
+public record OrderItemDto(
+        Long id,
+        Long productId,
+        Long orderId,
+        Integer quantity,
+        Double price) { }
