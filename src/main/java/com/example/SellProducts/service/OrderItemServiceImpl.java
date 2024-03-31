@@ -4,9 +4,11 @@ import com.example.SellProducts.dto.orderItem.*;
 import com.example.SellProducts.entities.*;
 import com.example.SellProducts.exception.*;
 import com.example.SellProducts.repositories.*;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class OrderItemServiceImpl implements OrderItemService {
 
     private final OrderItemRepository orderItemRepository;
