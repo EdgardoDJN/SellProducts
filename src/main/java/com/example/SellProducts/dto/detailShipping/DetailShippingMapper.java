@@ -12,5 +12,5 @@ public interface DetailShippingMapper {
     DetailShippingDto toDto(DetailShipping detailShipping);
 
     @Mapping(target = "id", ignore = true)
-    DetailShipping toEntity(DetailShippingDto detailShippingDto);
+    DetailShipping toEntity(CreateShippingDto createShippingDto);
 }
