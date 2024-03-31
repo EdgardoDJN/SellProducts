@@ -140,7 +140,7 @@ public class CustomerServiceImplTest {
 
         // When
         // Then
-        assertThrows(CustomerNotFoundException.class, () -> customerService.findById(id));
+        assertThrows(CustomerNotFoundException.class, () -> customerService.findById(id), "Customer not found");
     }
 
     @Test
@@ -196,7 +196,7 @@ public class CustomerServiceImplTest {
 
         // When
         // Then
-        assertThrows(CustomerNotFoundException.class, () -> customerService.deleteCustomer(id));
+        assertThrows(CustomerNotFoundException.class, () -> customerService.deleteCustomer(id), "Customer not found");
     }
 
     @Test

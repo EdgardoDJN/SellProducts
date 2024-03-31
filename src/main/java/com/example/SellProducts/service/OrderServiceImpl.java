@@ -7,6 +7,9 @@ import com.example.SellProducts.dto.order.OrderToSaveDto;
 import com.example.SellProducts.entities.Customer;
 import com.example.SellProducts.entities.Order;
 import com.example.SellProducts.entities.OrderStatus;
+import com.example.SellProducts.exception.CustomerNotFoundException;
+import com.example.SellProducts.exception.OrderNotFoundException;
+import com.example.SellProducts.exception.ProductNotFoundException;
 import com.example.SellProducts.repositories.CustomerRepository;
 import com.example.SellProducts.repositories.OrderRepository;
 import org.springframework.stereotype.Service;
@@ -58,7 +61,7 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public OrderDto getOrder(Long id) {
-        Order order = orderRepository.findById(id).orElseThrow();
+        Order order = orderRepository.findById(id).orElseThrow(OrderNotFoundException::new);
         return orderMapper.toDto(order);
     }
 
@@ -71,9 +74,9 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public OrderDto updateOrder(Long id, OrderDto orderDto) {
-        Order order2 = orderRepository.findById(id).orElseThrow();
-        Customer customer = customerRepository.findById(orderDto.customerId()).orElseThrow();
+    public OrderDto updateOrder(Long id, OrderToSaveDto orderDto) {
+        Order order2 = orderRepository.findById(id).orElseThrow(OrderNotFoundException::new);
+        Customer customer = customerRepository.findById(orderDto.idCustomer()).orElseThrow(CustomerNotFoundException::new);
         return orderRepository.findById(id)
                 .map(order -> {
                     order.setCustomer(customer);
@@ -82,12 +85,12 @@ public class OrderServiceImpl implements OrderService{
                     orderRepository.save(order);
                     return orderMapper.toDto(order);
                 })
-                .orElseThrow();
+                .orElseThrow(OrderNotFoundException::new);
     }
 
     @Override
     public void deleteOrder(Long id) {
-        var order = orderRepository.findById(id).orElseThrow();
+        var order = orderRepository.findById(id).orElseThrow(OrderNotFoundException::new);
         orderRepository.delete(order);
     }
 }

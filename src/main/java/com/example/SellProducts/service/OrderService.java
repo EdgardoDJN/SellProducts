@@ -15,7 +15,7 @@ public interface OrderService {
     List<OrderDtoRetrieve> getOrdersByRetrieveOrdersWithItemsByCustomer(Long customerId);
     OrderDto getOrder(Long id);
     List<OrderDto> getOrders();
-    OrderDto updateOrder(Long id, OrderDto orderDto);
+    OrderDto updateOrder(Long id, OrderToSaveDto orderDto);
     void deleteOrder(Long id);
 
 }

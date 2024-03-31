@@ -76,7 +76,7 @@ public class ProductServiceImplTest {
 
         // When
         // Then
-        assertThrows(ProductNotFoundException.class, () -> productService.getProductById(id));
+        assertThrows(ProductNotFoundException.class, () -> productService.getProductById(id), "Product not found");
     }
 
     @Test
@@ -272,7 +272,7 @@ public class ProductServiceImplTest {
 
         // When
         // Then
-        assertThrows(ProductNotFoundException.class, () -> productService.updateProduct(id, ProductToSaveDto.builder().build()));
+        assertThrows(ProductNotFoundException.class, () -> productService.updateProduct(id, ProductToSaveDto.builder().build()), "Product not found");
     }
 
     @Test
@@ -306,7 +306,7 @@ public class ProductServiceImplTest {
 
         // When
         // Then
-        assertThrows(ProductNotFoundException.class, () -> productService.deleteProduct(id));
+        assertThrows(ProductNotFoundException.class, () -> productService.deleteProduct(id), "Product not found");
     }
 
 
