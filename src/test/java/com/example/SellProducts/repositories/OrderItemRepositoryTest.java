@@ -135,4 +135,17 @@ class OrderItemRepositoryTest extends AbstractIntegrationDBTest {
         // Then
         assertEquals(100.0, totalSales);
     }
+
+    @Test
+    void givenOrderItems_whenProductId_thenReturnListOrderItems() {
+        // Given
+        init();
+        final Long productId = 1L;
+
+        // When
+        List<OrderItem> orderItems = orderItemRepository.findByProductId(productId);
+
+        // Then
+        assertEquals(1, orderItems.size());
+    }
 }
