@@ -129,7 +129,7 @@ public class OrderRepositoryTest extends AbstractIntegrationDBTest {
 
 
         // When
-        List<OrderDtoRetrieve> orders = orderRepository.retrieveOrdersWithItemsByCustomer(id);
+        List<Object[]> orders = orderRepository.retrieveOrdersWithItemsByCustomer(id);
 
         // Then
         assertEquals(1, orders.size());
@@ -141,7 +141,7 @@ public class OrderRepositoryTest extends AbstractIntegrationDBTest {
         init();
 
         // When
-        List<OrderDtoRetrieve> orders = orderRepository.retrieveOrdersWithItemsByCustomer(2L);
+        List<Object[]> orders = orderRepository.retrieveOrdersWithItemsByCustomer(2L);
 
         // Then
         assertEquals(0, orders.size());

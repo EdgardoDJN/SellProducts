@@ -1,9 +1,6 @@
 package com.example.SellProducts.service;
 
-import com.example.SellProducts.dto.order.OrderDto;
-import com.example.SellProducts.dto.order.OrderDtoRetrieve;
-import com.example.SellProducts.dto.order.OrderMapper;
-import com.example.SellProducts.dto.order.OrderToSaveDto;
+import com.example.SellProducts.dto.order.*;
 import com.example.SellProducts.entities.Customer;
 import com.example.SellProducts.entities.Order;
 import com.example.SellProducts.entities.OrderStatus;
@@ -12,6 +9,7 @@ import com.example.SellProducts.exception.OrderNotFoundException;
 import com.example.SellProducts.exception.ProductNotFoundException;
 import com.example.SellProducts.repositories.CustomerRepository;
 import com.example.SellProducts.repositories.OrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,11 +19,13 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService{
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
+    private final OrderMapper2 orderMapper2;
     private final CustomerRepository customerRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, CustomerRepository customerRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, OrderMapper2 orderMapper2, CustomerRepository customerRepository) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
+        this.orderMapper2 = orderMapper2;
         this.customerRepository = customerRepository;
     }
 
@@ -55,8 +55,8 @@ public class OrderServiceImpl implements OrderService{
     //Revisar esta en los test y pendiente para mas adelante en los controladores
     @Override
     public List<OrderDtoRetrieve> getOrdersByRetrieveOrdersWithItemsByCustomer(Long customerId) {
-        var orders = orderRepository.retrieveOrdersWithItemsByCustomer(customerId);
-        return orders;
+        List<Object[]> prueba = orderRepository.retrieveOrdersWithItemsByCustomer(customerId);
+        return orderMapper2.toDto(prueba);
     }
 
     @Override

@@ -53,10 +53,10 @@ public class OrderItemServiceImpl implements OrderItemService {
         OrderItem orderItem = orderItemRepository.findById(id)
                 .orElseThrow(OrderItemNotFoundException::new);
 
-        orderItem.setQuantity(updateOrderItemDto.quantity());
-        orderItem.setPrice(updateOrderItemDto.price());
-        orderItem.setOrder(orderRepository.findById(updateOrderItemDto.orderId()).orElseThrow(OrderNotFoundException::new));
-        orderItem.setProduct(productRepository.findById(updateOrderItemDto.productId()).orElseThrow(ProductNotFoundException::new));
+        orderItem.setQuantity(updateOrderItemDto.getQuantity());
+        orderItem.setPrice(updateOrderItemDto.getPrice());
+        orderItem.setOrder(orderRepository.findById(updateOrderItemDto.getOrderId()).orElseThrow(OrderNotFoundException::new));
+        orderItem.setProduct(productRepository.findById(updateOrderItemDto.getProductId()).orElseThrow(ProductNotFoundException::new));
 
         OrderItem updatedOrderItem = orderItemRepository.save(orderItem);
 
