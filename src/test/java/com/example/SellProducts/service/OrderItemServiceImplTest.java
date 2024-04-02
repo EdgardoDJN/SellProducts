@@ -105,8 +105,8 @@ class OrderItemServiceImplTest {
                 .build();
 
         when(orderItemRepository.findById(orderItem.getId())).thenReturn(java.util.Optional.of(orderItem));
-        when(orderRepository.findById(updateOrderItemDto.orderId())).thenReturn(java.util.Optional.of(orderItem.getOrder()));
-        when(productRepository.findById(updateOrderItemDto.productId())).thenReturn(java.util.Optional.of(orderItem.getProduct()));
+        when(orderRepository.findById(updateOrderItemDto.getOrderId())).thenReturn(java.util.Optional.of(orderItem.getOrder()));
+        when(productRepository.findById(updateOrderItemDto.getProductId())).thenReturn(java.util.Optional.of(orderItem.getProduct()));
         when(orderItemRepository.save(orderItem)).thenReturn(orderItem);
         when(orderItemMapper.toDto(orderItem)).thenReturn(orderItemDto);
 

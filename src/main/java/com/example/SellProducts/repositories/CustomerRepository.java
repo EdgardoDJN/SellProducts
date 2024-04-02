@@ -10,5 +10,6 @@ import com.example.SellProducts.entities.Customer;
 public interface CustomerRepository extends JpaRepository<Customer, Long>{
     List<Customer> findByEmail(String email);
     List<Customer> findByAddress(String address);
-    List<Customer> findByNameStartingWith(String nombre);
+    //findByNameStartingWith
+    List<Customer> findByNameIsContainingIgnoreCase(String nombre);
 }

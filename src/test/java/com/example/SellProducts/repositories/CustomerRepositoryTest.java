@@ -87,7 +87,7 @@ class CustomerRepositoryTest extends AbstractIntegrationDBTest {
         init();
 
         // When
-        List<Customer> customers = customerRepository.findByNameStartingWith("Customer");
+        List<Customer> customers = customerRepository.findByNameIsContainingIgnoreCase("Customer");
 
         // Then
         assertEquals(1, customers.size());
@@ -99,7 +99,7 @@ class CustomerRepositoryTest extends AbstractIntegrationDBTest {
         init();
 
         // When
-        List<Customer> customers = customerRepository.findByNameStartingWith("prueba");
+        List<Customer> customers = customerRepository.findByNameIsContainingIgnoreCase("prueba");
 
         // Then
         assertEquals(0, customers.size());

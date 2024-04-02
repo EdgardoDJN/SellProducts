@@ -4,6 +4,7 @@ import com.example.SellProducts.dto.product.ProductDto;
 import com.example.SellProducts.dto.product.ProductToSaveDto;
 import com.example.SellProducts.service.ProductService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,13 +45,13 @@ public class ProductController {
     }
     //createProduct
     @PostMapping
-    public ResponseEntity<ProductDto> createProduct(@Valid @RequestBody ProductToSaveDto productDto) {
-        return ResponseEntity.ok().body(productService.createProduct(productDto));
+    public ResponseEntity<Void> createProduct(@Valid @RequestBody ProductToSaveDto productDto) {
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDto> updateProduct(@PathVariable("id") Long id, @RequestBody ProductToSaveDto productDto) {
-        return ResponseEntity.ok().body(productService.updateProduct(id, productDto));
+    public ResponseEntity<Void> updateProduct(@PathVariable("id") Long id, @Valid @RequestBody ProductToSaveDto productDto) {
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")

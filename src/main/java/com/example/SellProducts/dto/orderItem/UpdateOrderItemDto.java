@@ -1,16 +1,22 @@
 package com.example.SellProducts.dto.orderItem;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 @Builder
-public record UpdateOrderItemDto(
+@Getter
+@Setter
+@AllArgsConstructor
+public class UpdateOrderItemDto{
         @NotNull(message = "Is required")
-        Long productId,
+        private Long productId;
         @NotNull(message = "Is required")
-        Long orderId,
+        private Long orderId;
         @NotNull(message = "Is required")
-        Integer quantity,
+        private Integer quantity;
         @NotNull(message = "Is required")
-        Double price) {
+        private Double price;
 }

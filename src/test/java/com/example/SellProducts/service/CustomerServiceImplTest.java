@@ -96,7 +96,7 @@ public class CustomerServiceImplTest {
     @Test
     void givenName_whenGetCustomersByNameStartingWith_thenReturnCustomers() {
         // Given
-        given(customerRepository.findByNameStartingWith("John")).willReturn(List.of(customer));
+        given(customerRepository.findByNameIsContainingIgnoreCase("John")).willReturn(List.of(customer));
         given(customerMapper.toDto(customer)).willReturn(CustomerDto.builder().id(1L).name("John Doe").email("eda@gmai.com").address("1234 Main St").build());
         // When
         var customers = customerService.getCustomersByNameStartingWith("John");
@@ -111,7 +111,7 @@ public class CustomerServiceImplTest {
     @Test
     void givenName_whenGetCustomersByNameStartingWith_thenReturnEmptyList() {
         // Given
-        given(customerRepository.findByNameStartingWith("John")).willReturn(List.of());
+        given(customerRepository.findByNameIsContainingIgnoreCase("John")).willReturn(List.of());
         // When
         var customers = customerService.getCustomersByNameStartingWith("John");
         // Then

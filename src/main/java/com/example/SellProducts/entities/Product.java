@@ -19,6 +19,6 @@ public class Product {
     private Double price;
     private Integer stock;
 
-    @OneToOne(mappedBy = "product")
-    private OrderItem orderItem;
+    @OneToMany(mappedBy = "product")
+    private List<OrderItem> orderItem;
 }

@@ -1,9 +1,6 @@
 package com.example.SellProducts.service;
 
-import com.example.SellProducts.dto.order.OrderDto;
-import com.example.SellProducts.dto.order.OrderDtoRetrieve;
-import com.example.SellProducts.dto.order.OrderMapper;
-import com.example.SellProducts.dto.order.OrderToSaveDto;
+import com.example.SellProducts.dto.order.*;
 import com.example.SellProducts.dto.orderItem.UpdateOrderItemDto;
 import com.example.SellProducts.entities.Customer;
 import com.example.SellProducts.entities.Order;
@@ -18,12 +15,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.times;
@@ -36,25 +38,35 @@ public class OrderServiceImplTest {
     @Mock
     private OrderMapper orderMapper;
     @Mock
+    private OrderMapper2 orderMapper2;
+    @Mock
     private CustomerRepository customerRepository;
     @InjectMocks
     private OrderServiceImpl orderService;
 
     private Order order;
-    private OrderDtoRetrieve OrderDtoRetrieve;
+    private OrderDtoRetrieve orderDtoRetrieve;
     private UpdateOrderItemDto updateOrderItemDto;
+    private List<Object[]> simulatedOrders = new ArrayList<>();
+    private static final String PENDING = "PENDING";
 
     @BeforeEach
     public void setUp() {
+        Timestamp dateOrder = new Timestamp(System.currentTimeMillis());
+        simulatedOrders.add(new Object[] {1L, dateOrder, "PENDING", 1L, 1L, 100.0, 4, 1L, 1L});
         updateOrderItemDto = UpdateOrderItemDto.builder()
                 .productId(1L)
+                .price(100.0)
+                .orderId(1L)
                 .quantity(1)
                 .build();
         List<UpdateOrderItemDto> orderItems = List.of(updateOrderItemDto);
-
-        OrderDtoRetrieve = OrderDtoRetrieve.builder()
+        // Convertir el Timestamp a LocalDateTime
+        Instant instant = Instant.ofEpochMilli(dateOrder.getTime());
+        LocalDateTime localDateTime = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
+        orderDtoRetrieve = OrderDtoRetrieve.builder()
                 .id(1L)
-                .dateOrder(LocalDateTime.now())
+                .dateOrder(localDateTime)
                 .status(OrderStatus.PENDING)
                 .customerId(1L)
                 .orderItems(orderItems)
@@ -207,17 +219,17 @@ public class OrderServiceImplTest {
     void givenCustomerId_whenGetOrdersByRetrieveOrdersWithItemsByCustomer_thenReturnListOfOrderDtoRetrieve() {
         // Given
         Long customerId = 1L;
-        given(orderRepository.retrieveOrdersWithItemsByCustomer(customerId)).willReturn(java.util.List.of(OrderDtoRetrieve));
+        given(orderRepository.retrieveOrdersWithItemsByCustomer(customerId)).willReturn(simulatedOrders);
+        given(orderMapper2.toDto(simulatedOrders)).willReturn(java.util.List.of(orderDtoRetrieve));
 
         // When
         var orders = orderService.getOrdersByRetrieveOrdersWithItemsByCustomer(customerId);
 
         // Then
         assertThat(orders).hasSize(1);
-        assertThat(orders.get(0).id()).isEqualTo(order.getId());
-        assertThat(orders.get(0).dateOrder()).isEqualTo(order.getDateOrder());
-        assertThat(orders.get(0).status()).isEqualTo(order.getStatus());
-        assertThat(orders.get(0).customerId()).isEqualTo(order.getCustomer().getId());
+        assertThat(orders.get(0).getId()).isEqualTo(order.getId());
+        assertThat(orders.get(0).getStatus()).isEqualTo(order.getStatus());
+        assertThat(orders.get(0).getCustomerId()).isEqualTo(order.getCustomer().getId());
     }
 
     @Test

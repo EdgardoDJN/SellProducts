@@ -47,7 +47,7 @@ public class CustomerServiceImpl implements CustomerService{
 
     @Override
     public List<CustomerDto> getCustomersByNameStartingWith(String name) {
-        var customers = customerRepository.findByNameStartingWith(name);
+        var customers = customerRepository.findByNameIsContainingIgnoreCase(name);
         return customers.stream()
                 .map(customerMapper::toDto)
                 .toList();
