@@ -34,6 +34,16 @@ class PaymentRepositoryTest extends AbstractIntegrationDBTest {
     }
 
     List<Payment> init() {
+        List<Product> products = List.of(
+                Product.builder()
+                        .name("Product 1")
+                        .price(100.0)
+                        .build(),
+                Product.builder()
+                        .name("Product 2")
+                        .price(200.0)
+                        .build()
+        );
         Customer customer = Customer.builder()
                 .name("Customer 1")
                 .email("prueba")
@@ -55,6 +65,7 @@ class PaymentRepositoryTest extends AbstractIntegrationDBTest {
                 .datePayment(LocalDate.now())
                 .method(methodPayment.CREDIT_CARD)
                 .order(order)
+                .products(products)
                 .build();
 
         paymentRepository.save(payment);

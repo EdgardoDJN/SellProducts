@@ -1,10 +1,9 @@
 package com.example.SellProducts.service;
 
 import com.example.SellProducts.dto.payment.*;
-import com.example.SellProducts.entities.Order;
-import com.example.SellProducts.entities.OrderStatus;
-import com.example.SellProducts.entities.Payment;
-import com.example.SellProducts.entities.methodPayment;
+import com.example.SellProducts.dto.product.ProductToSaveDto;
+import com.example.SellProducts.dto.product.ProductToSaveDto2;
+import com.example.SellProducts.entities.*;
 import com.example.SellProducts.exception.PaymentNotFoundException;
 import com.example.SellProducts.repositories.OrderRepository;
 import com.example.SellProducts.repositories.PaymentRepository;
@@ -17,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,6 +34,8 @@ class PaymentServiceImplTest {
     @Mock
     private PaymentMapper paymentMapper;
     @Mock
+    private PaymentMapper2 paymentMapper2;
+    @Mock
     private OrderRepository orderRepository;
     @Mock
     private PaymentProvider paymentProvider;
@@ -41,6 +43,8 @@ class PaymentServiceImplTest {
     private PaymentServiceImpl paymentService;
 
     private Payment payment;
+    private List<ProductToSaveDto> productsDto1;
+    private List<ProductToSaveDto2> productsDto2;
     @BeforeEach
     void setUp() {
         var order = Order.builder()
@@ -49,12 +53,31 @@ class PaymentServiceImplTest {
                 .dateOrder(LocalDateTime.now())
                 .build();
 
+        List<Product> products = List.of(Product.builder()
+                .id(1L)
+                .name("Product")
+                .price(100.0)
+                .stock(10)
+                .build());
+        productsDto1 = List.of(ProductToSaveDto.builder()
+                .name("Product")
+                .price(100.0)
+                .stock(10)
+                .build());
+        productsDto2 = List.of(ProductToSaveDto2.builder()
+                .id(1L)
+                .name("Product")
+                .price(100.0)
+                .stock(10)
+                .build());
+
         payment = Payment.builder()
                 .id(1L)
                 .totalPayment(100.0)
                 .datePayment(LocalDate.now())
                 .method(methodPayment.CREDIT_CARD)
                 .order(order)
+                .products(products)
                 .build();
     }
 
@@ -63,14 +86,17 @@ class PaymentServiceImplTest {
         // Given
         Long id = 1L;
         given(paymentRepository.findById(id)).willReturn(Optional.of(payment));
-        given(paymentMapper.toDTO(payment)).willReturn(PaymentDTO.builder()
+        given(paymentMapper.toDTO(payment)).willReturn(PaymentDTO2.builder()
                 .id(payment.getId())
                 .totalPayment(payment.getTotalPayment())
                 .orderId(payment.getOrder().getId())
+                .products(productsDto2)
+                .method(payment.getMethod())
+                .datePayment(payment.getDatePayment())
                 .build());
 
         // Then
-        PaymentDTO found = paymentService.getPaymentById(id);
+        PaymentDTO2 found = paymentService.getPaymentById(id);
 
         // When
         assertThat(found).isNotNull();
@@ -83,10 +109,11 @@ class PaymentServiceImplTest {
     void givenPayments_whenAllPayments_thenReturnAllPayments() {
         // Given
         given(paymentRepository.findAll()).willReturn(java.util.List.of(payment));
-        given(paymentMapper.toDTO(payment)).willReturn(PaymentDTO.builder()
+        given(paymentMapper.toDTO(payment)).willReturn(PaymentDTO2.builder()
                 .id(payment.getId())
                 .totalPayment(payment.getTotalPayment())
                 .orderId(payment.getOrder().getId())
+                .products(productsDto2)
                 .build());
 
         // Then
@@ -106,12 +133,13 @@ class PaymentServiceImplTest {
         Long orderId = 1L;
         methodPayment method = methodPayment.CREDIT_CARD;
         given(paymentRepository.findByOrderIdAndMethod(orderId, method)).willReturn(java.util.List.of(payment));
-        given(paymentMapper.toDTO(payment)).willReturn(PaymentDTO.builder()
+        given(paymentMapper.toDTO(payment)).willReturn(PaymentDTO2.builder()
                 .id(payment.getId())
                 .totalPayment(payment.getTotalPayment())
                 .orderId(payment.getOrder().getId())
                 .datePayment(payment.getDatePayment())
                 .method(payment.getMethod())
+                .products(productsDto2)
                 .build());
 
         // Then
@@ -124,6 +152,7 @@ class PaymentServiceImplTest {
         assertEquals(found.get(0).totalPayment(), payment.getTotalPayment());
         assertEquals(found.get(0).orderId(), payment.getOrder().getId());
         assertEquals(found.get(0).method(), payment.getMethod());
+
     }
 
     @Test
@@ -132,12 +161,13 @@ class PaymentServiceImplTest {
         LocalDate start = LocalDate.now().minusDays(1);
         LocalDate end = LocalDate.now();
         given(paymentRepository.findByDatePaymentBetween(start, end)).willReturn(java.util.List.of(payment));
-        given(paymentMapper.toDTO(payment)).willReturn(PaymentDTO.builder()
+        given(paymentMapper.toDTO(payment)).willReturn(PaymentDTO2.builder()
                 .id(payment.getId())
                 .totalPayment(payment.getTotalPayment())
                 .orderId(payment.getOrder().getId())
                 .datePayment(payment.getDatePayment())
                 .method(payment.getMethod())
+                .products(productsDto2)
                 .build());
 
         // Then
@@ -160,16 +190,18 @@ class PaymentServiceImplTest {
                 .orderId(payment.getOrder().getId())
                 .datePayment(payment.getDatePayment())
                 .method(payment.getMethod())
+                .products(productsDto2)
                 .build();
 
         when(orderRepository.findById(anyLong())).thenReturn(Optional.of(payment.getOrder()));
         when(paymentMapper.toEntity(any(CreatePaymentDTO.class))).thenReturn(payment);
-        when(paymentMapper.toDTO(any(Payment.class))).thenReturn(PaymentDTO.builder()
+        when(paymentMapper.toDTO(any(Payment.class))).thenReturn(PaymentDTO2.builder()
                 .id(payment.getId())
                 .totalPayment(payment.getTotalPayment())
                 .orderId(payment.getOrder().getId())
                 .datePayment(payment.getDatePayment())
                 .method(payment.getMethod())
+                .products(productsDto2)
                 .build());
 
         // Then
@@ -191,18 +223,19 @@ class PaymentServiceImplTest {
                 .datePayment(LocalDate.now())
                 .method(methodPayment.CASH)
                 .build();
-        var paymentDTO = PaymentDTO.builder()
+        var paymentDTO2 = PaymentDTO2.builder()
                 .id(payment.getId())
                 .totalPayment(payment.getTotalPayment())
                 .orderId(updatePaymentDTO.orderId())
                 .datePayment(updatePaymentDTO.datePayment())
                 .method(updatePaymentDTO.method())
+                .products(productsDto2)
                 .build();
 
         given(paymentRepository.findById(payment.getId())).willReturn(Optional.of(payment));
         given(orderRepository.findById(updatePaymentDTO.orderId())).willReturn(Optional.of(payment.getOrder()));
         given(paymentProvider.calculateTotalItems(updatePaymentDTO.orderId())).willReturn(payment.getTotalPayment());
-        given(paymentMapper.toDTO(payment)).willReturn(paymentDTO);
+        given(paymentMapper.toDTO(payment)).willReturn(paymentDTO2);
         given(paymentRepository.save(payment)).willReturn(payment);
 
         // Then

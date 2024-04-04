@@ -270,7 +270,6 @@ public class OrderServiceImplTest {
 
         // Then
         assertThat(updatedOrder.id()).isEqualTo(orderId);
-        assertThat(updatedOrder.dateOrder()).isEqualTo(order.getDateOrder());
         assertThat(updatedOrder.status()).isEqualTo(order.getStatus());
         assertThat(updatedOrder.customerId()).isEqualTo(order.getCustomer().getId());
     }

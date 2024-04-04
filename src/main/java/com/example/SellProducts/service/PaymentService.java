@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PaymentService {
-    PaymentDTO getPaymentById(Long id);
-    List<PaymentDTO> getAllPayments();
-    List<PaymentDTO> getPaymentsByOrderId(Long orderId, methodPayment method);
-    List<PaymentDTO> getPaymentsForDateRange(LocalDate start, LocalDate end);
-    PaymentDTO createPayment(CreatePaymentDTO createPaymentDTO);
-    PaymentDTO UpdatePayment(Long id, UpdatePaymentDTO updatePaymentDTO);
+    PaymentDTO2 getPaymentById(Long id);
+    List<PaymentDTO2> getAllPayments();
+    List<PaymentDTO2> getPaymentsByOrderId(Long orderId, methodPayment method);
+    List<PaymentDTO2> getPaymentsForDateRange(LocalDate start, LocalDate end);
+    PaymentDTO2 createPayment(CreatePaymentDTO createPaymentDTO);
+    PaymentDTO2 UpdatePayment(Long id, UpdatePaymentDTO updatePaymentDTO);
     void deletePayment(Long id);
 }
