@@ -21,4 +21,7 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private List<OrderItem> orderItem;
+
+    @ManyToMany(mappedBy = "products")
+    private List<Payment> payments;
 }

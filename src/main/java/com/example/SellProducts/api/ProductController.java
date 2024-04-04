@@ -46,11 +46,13 @@ public class ProductController {
     //createProduct
     @PostMapping
     public ResponseEntity<Void> createProduct(@Valid @RequestBody ProductToSaveDto productDto) {
+        productService.createProduct(productDto);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateProduct(@PathVariable("id") Long id, @Valid @RequestBody ProductToSaveDto productDto) {
+        productService.updateProduct(id, productDto);
         return ResponseEntity.ok().build();
     }
 

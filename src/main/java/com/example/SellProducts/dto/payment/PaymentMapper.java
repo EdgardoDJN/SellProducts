@@ -18,8 +18,10 @@ public abstract class PaymentMapper {
     @Mapping(target = "id", ignore = true)
     public abstract Payment toEntity(CreatePaymentDTO createPaymentDTO);
 
+
+
     @Mapping(target = "orderId", source = "order.id")
-    public abstract PaymentDTO toDTO(Payment payment);
+    public abstract PaymentDTO2 toDTO(Payment payment);
 
     @Named("calculateTotalPayment")
     public Double calculateTotalPayment(Long orderId){
